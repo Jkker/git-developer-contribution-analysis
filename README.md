@@ -1,10 +1,11 @@
+![build](https://github.com/bloombar/git-developer-contribution-analysis/actions/workflows/build.yaml/badge.svg)
+
 # Git Developer Contributions Analysis
 
-This repository contains a command-line tool, written in `python`, to track developers' contributions to one or more Git repositories within a particular time range. GitHub's Insights tools and charts are not extremely useful, and often omit contributors or give misleading statistics.
+This repository contains a command-line tool, `gitlogstats`, written in `python`, to track developers' contributions to one or more Git repositories within a particular time range. GitHub's Insights tools and charts are not extremely useful, and often omit contributors or give misleading statistics.
 
 This script calculates the following, for each developer in each repository:
 
-- number of **merges**
 - number of **commits**
 - number of **lines added**
 - number of **lines deleted**
@@ -12,17 +13,18 @@ This script calculates the following, for each developer in each repository:
 
 The results can be formatted as `csv`, `json`, or `markdown`.
 
-## Running the program
+## Install
 
-1. Fork this repository and clone it to your local machine
-1. Grant yourself execute permissions to the `python` script, e.g. `chmod u+x *.py`.
+`gitlogstats` can be installed with a package manager such as `pip`
+
+e.g. `pip install gitlogstats`, `pip3 install gitlogstats`, depending on your environment.
 
 ## Usage
 
-The command `./git-activity.py --help` shows the usage instructions:
+The command `gitlogstats --help` shows the usage instructions:
 
 ```
-usage: git-analysis.py [-h] (-r REPOSITORY | -rf REPOFILE) [-u USER] [-s START] [-e END] [-x EXCLUSIONS] [-f {csv,json,markdown}] [-v]
+usage: gitlogstats [-h] (-r REPOSITORY | -rf REPOFILE) [-u USER] [-s START] [-e END] [-x EXCLUSIONS] [-f {csv,json,markdown}] [-v] [-c]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -39,7 +41,10 @@ optional arguments:
   -f {csv,json,markdown}, --format {csv,json,markdown}
                         The format in which to output the results
   -v, --verbose         Whether to output debugging info
+  -c, --clean           Remove contributors without any contribuition
 ```
+
+In case `gitlogstats` is not found as a command, even after installing, try `python -m gitlogstats` or `python3 -m gitlogstats` instead.
 
 ## Example usage
 
@@ -50,13 +55,13 @@ The `-r` and `-rf` flags control whether the script looks at a single repository
 Output the contributions of all developers to a single repository:
 
 ```bash
-./git-analysis.py -r https://github.com/bloombar/git-developer-contribution-analysis.git
+gitlogstats -r https://github.com/bloombar/git-developer-contribution-analysis.git
 ```
 
 Output the contributions of all developers to a set of repositories stored in a file named `repos.txt` (see [example file](./repos.txt)):
 
 ```bash
-./git-analysis.py -rf repos.txt
+gitlogstats -rf repos.txt
 ```
 
 ### Individual contributor versus all contributors
@@ -66,13 +71,13 @@ By default, the statistics of all contributors are calculated. The `-u` flag can
 Output the contributions of only the contributor named `bloombar` to a single repository:
 
 ```bash
-./git-analysis.py -u bloombar -r https://github.com/bloombar/git-developer-contribution-analysis.git
+gitlogstats -u bloombar -r https://github.com/bloombar/git-developer-contribution-analysis.git
 ```
 
 The same, but to a batch of repositories listed in the `repos.txt` file:
 
 ```
-./git-analysis.py -u bloombar -rf repos.txt
+gitlogstats -u bloombar -rf repos.txt
 ```
 
 ### Custom date range
@@ -82,13 +87,21 @@ By default, contributions from a year ago until today are analyzed. Use the `-s`
 Output the contributions to a single repository for a specific date range, inclusive.
 
 ```bash
-./git-analysis.py -s 11/15/2021 -e 12/15/2021 -r https://github.com/bloombar/git-developer-contribution-analysis.git
+gitlogstats -s 11/15/2021 -e 12/15/2021 -r https://github.com/bloombar/git-developer-contribution-analysis.git
 ```
 
 The same, but to a batch of repositories listed in the `repos.txt` file:
 
 ```
-./git-analysis.py -s 11/15/2021 -e 12/15/2021 -rf repos.txt
+gitlogstats -s 11/15/2021 -e 12/15/2021 -rf repos.txt
+```
+
+### Filter Contributors
+
+Results can be filtered to show only contributors with activity. Use the `-c` to file the result.
+
+```
+gitlogstats -rf repos.txt -c
 ```
 
 ### Formatting the results
@@ -96,7 +109,7 @@ The same, but to a batch of repositories listed in the `repos.txt` file:
 The results can be formatted as `csv`, `json`, or a `markdown` table. The default is `csv`. Use the `-f` flag to control the output format.
 
 ```
-./git-analysis.py -s 11/15/2021 -e 12/15/2021 -rf repos.txt -f markdown
+gitlogstats -s 11/15/2021 -e 12/15/2021 -rf repos.txt -f markdown
 ```
 
 ### Combinations
@@ -104,13 +117,13 @@ The results can be formatted as `csv`, `json`, or a `markdown` table. The defaul
 Flags can be combined to provide more targeted analysis, e.g. a specific contributor over a specific date range
 
 ```
-./git-analysis.py -u bloombar -s 11/15/2021 -e 12/15/2021 -r https://github.com/bloombar/git-developer-contribution-analysis.git -f json
+gitlogstats -u bloombar -s 11/15/2021 -e 12/15/2021 -r https://github.com/bloombar/git-developer-contribution-analysis.git -f json
 ```
 
 The same, but to a batch of repositories listed in the `repos.txt` file:
 
 ```
-./git-analysis.py -u bloombar -s 11/15/2021 -e 12/15/2021 -rf repos.txt -f json
+gitlogstats -u bloombar -s 11/15/2021 -e 12/15/2021 -rf repos.txt -f json
 ```
 
 ## Words of caution
